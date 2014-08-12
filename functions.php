@@ -5,6 +5,10 @@ require( 'includes/WP-API/plugin.php' );
 $tdir = get_template_directory().'/includes/';
 define('TDIR', $tdir);
 
+
+$theme = get_template_directory_uri();
+define('THEME', $theme);
+
 require( 'functions/wp_enqueue_script.php' );
 
 // Editable

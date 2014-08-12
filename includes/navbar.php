@@ -9,7 +9,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="http://localhost/"><img src="<?php echo $windexPath; ?>/img/nytimes20.png" alt="The New York Times">Design</a>
+      <a class="navbar-brand" href="http://localhost/"><img src="<?php echo THEME; ?>/img/nytimes20.png" alt="The New York Times">Design</a>
     </div>
 
     <ul class="auth nav navbar-nav navbar-right">
