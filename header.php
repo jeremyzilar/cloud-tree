@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title><?php echo $titletext; ?></title>
+  <title>Cloud Tree</title>
 
   <!-- Fonts: Typekit -->
   <script type="text/javascript" src="//use.typekit.net/nug1zni.js"></script>
