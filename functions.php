@@ -2,7 +2,7 @@
 
 require( 'includes/WP-API/plugin.php' );
 
-$tdir = get_template_directory_uri().'/includes/';
+$tdir = get_template_directory().'/includes/';
 define('TDIR', $tdir);
 
 require( 'functions/wp_enqueue_script.php' );
