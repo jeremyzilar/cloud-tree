@@ -4,19 +4,15 @@
   <meta charset="utf-8">
   <title><?php echo $titletext; ?></title>
 
-
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="<?php echo $windexPath; ?>/css/font-awesome.min.css" type="text/css" media="screen" title="no title" charset="utf-8">  
-
   <!-- Fonts: Typekit -->
   <script type="text/javascript" src="//use.typekit.net/nug1zni.js"></script>
   <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
-  
-  
+
+  <?php wp_head() ?>
 </head>
 
 <body class="" data-version="<?php echo $app_version; ?>" data-base="<?php echo DATABASE ? 'true' : 'false'; ?>" editable="<?php echo EDITABLE ? 'true' : 'false'; ?>" logging="<?php echo EDITABLE ? 'true' : 'false'; ?>" auth="<?php echo LOGGEDIN ? 'true' : 'false'; ?>" user="<?php echo $username; ?>">
-  
+
   <?php
     include TDIR . 'login.php';
     include TDIR . 'navbar.php';
@@ -33,7 +29,7 @@
       <!-- PING — Message Bar -->
       <div class="row ping">
         <p><i class="fa fa-refresh fa-spin"></i> <span></span></p>
-      </div>  
+      </div>
 
       <!-- Page Head -->
       <div id="page-head" class="row">
@@ -42,18 +38,18 @@
         </div>
       </div>
       <!-- end #page-head -->
-      
+
       <div class="row">
         <div class="col-xs-12">
 
-          <?php 
-            
+          <?php
+
             // Breadcrumb Navigation
             include TDIR . 'breadcrumb-nav.php';
-            
+
             // File Upload
             include TDIR . 'file-upload.php';
-            
+
             // Edit Tools
             if (EDITABLE === true) {
               include TDIR . 'tools.php';
