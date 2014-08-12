@@ -1,5 +1,3 @@
-<?php require('config.php'); ?>
-<?php $url="http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']; ?>
 <!DOCTYPE html>
 
 <html>
@@ -7,15 +5,6 @@
   <meta charset="utf-8">
   <title><?php echo $titletext; ?></title>
 
-  <!-- CSS -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="<?php echo $windexPath; ?>/css/bootstrap.min.css" type="text/css" media="screen" title="no title" charset="utf-8">
-  <link rel="stylesheet" href="<?php echo $windexPath; ?>/css/files.css" type="text/css" media="screen" title="no title" charset="utf-8">
-  <link rel="stylesheet" href="<?php echo $windexPath; ?>/css/log.css" type="text/css" media="screen" title="no title" charset="utf-8">
-  <link rel="stylesheet" href="<?php echo $windexPath; ?>/css/showtell.css" type="text/css" media="screen" title="no title" charset="utf-8">
-  <link rel="stylesheet" href="<?php echo $windexPath; ?>/css/upload.css" type="text/css" media="screen" title="no title" charset="utf-8">
-  <link rel="stylesheet" href="<?php echo $windexPath; ?>/css/style.css" type="text/css" media="screen" title="no title" charset="utf-8">
-  <link rel="stylesheet" href="<?php echo $windexPath; ?>/css/slideshow.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="<?php echo $windexPath; ?>/css/font-awesome.min.css" type="text/css" media="screen" title="no title" charset="utf-8">  
