@@ -2,6 +2,8 @@
 
 require( 'includes/WP-API/plugin.php' );
 
+$tdir = get_template_directory_uri().'/includes/';
+define('TDIR', $tdir);
 
 // Editable
 //   If true, the each directory will be editable.
