@@ -2,16 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title><?php echo $titletext; ?></title>
-
-
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="<?php echo $windexPath; ?>/css/font-awesome.min.css" type="text/css" media="screen" title="no title" charset="utf-8">  
-
-  <!-- Fonts: Typekit -->
-  <script type="text/javascript" src="//use.typekit.net/nug1zni.js"></script>
-  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
-  
+  <title>Cloud Tree</title>
   
 </head>
 
