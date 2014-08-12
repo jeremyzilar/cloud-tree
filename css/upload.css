@@ -1,0 +1,66 @@
+/*upload*/
+
+
+.fileupload{
+	position: relative;
+	top:1px;
+	color:#428bca;
+	cursor: pointer;
+}
+.fileupload:hover{
+	color:#2a6496;
+}
+
+#upload{}
+#upload .fileupload-buttonbar{}
+
+#upload .container{
+  /*display: none;*/
+}
+#upload #fileupload{
+  margin:0;
+}
+#dropzone{
+	height:0;
+	text-align: center;
+	overflow: hidden;
+	/*background: #fff192;*/
+}
+#dropzone i{
+	color:#ccc;
+	font-size: 40px;
+	position: relative;
+  top: 31%;
+}
+.hover #dropzone{
+	margin-bottom:5px;
+	padding:5px;
+	border:2px #ccc dashed;	
+}
+
+.fileupload-buttonbar{
+	display: none;
+}
+
+#fileupload{}
+#fileupload .fileinput-button{
+	font-size: 18px;
+	cursor: pointer;
+}
+.fileinput-button input{
+	position: absolute;
+	top:40px;
+	left:-9999px;
+	margin: 0;
+	opacity: 0;
+	background: #333;
+	width:20px;
+	-ms-filter: 'alpha(opacity=0)';
+	direction: ltr;
+	cursor: pointer;
+}
+::-webkit-file-upload-button { cursor:pointer; }
+
+#upload table{
+  margin:0;
+}
