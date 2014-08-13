@@ -8,18 +8,18 @@
   <script type="text/javascript" src="//use.typekit.net/nug1zni.js"></script>
   <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
 
-  <?php wp_head() ?>
+  <?php wp_head(); ?>
 </head>
 
-<body class="" data-version="<?php echo $app_version; ?>" data-base="<?php echo DATABASE ? 'true' : 'false'; ?>" editable="<?php echo EDITABLE ? 'true' : 'false'; ?>" logging="<?php echo EDITABLE ? 'true' : 'false'; ?>" auth="<?php echo LOGGEDIN ? 'true' : 'false'; ?>" user="<?php echo $username; ?>">
+<body class="" data-version="<?php echo VERSION; ?>" data-base="<?php echo DATABASE ? 'true' : 'false'; ?>" editable="<?php echo EDITABLE ? 'true' : 'false'; ?>" logging="<?php echo EDITABLE ? 'true' : 'false'; ?>" auth="<?php echo LOGGEDIN ? 'true' : 'false'; ?>">
 
   <?php
-    include TDIR . 'login.php';
+    // include TDIR . 'login.php';
     include TDIR . 'navbar.php';
-    include TDIR . 'slideshow.php';
+    // include TDIR . 'slideshow.php';
     //Search
     if (DATABASE === true) {
-      include('search.php');
+      // include('search.php');
     }
   ?>
 

@@ -2,12 +2,32 @@
 
 require( 'includes/WP-API/plugin.php' );
 
+
+// App Name — What you call the place where you drop files
+$app_name = 'DesignDev';
+
+// App Version
+$app_version = 'v2.0';
+define('VERSION', $app_version);
+
+$app_author = 'Jeremy Zilar';
+
+// Organization Name
+$org_name = 'The New York Times';
+
+
 $tdir = get_template_directory().'/includes/';
 define('TDIR', $tdir);
 
 
 $theme = get_template_directory_uri();
 define('THEME', $theme);
+
+
+$loggedin = false;
+define('LOGGEDIN', $loggedin);
+
+
 
 require( 'functions/wp_enqueue_script.php' );
 
