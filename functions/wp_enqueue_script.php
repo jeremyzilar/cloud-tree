@@ -16,5 +16,6 @@ function scripts_styles() {
 	wp_enqueue_style( 'cloud-tree-upload', get_stylesheet_directory_uri() . '/css/upload.css',array(), $q);
 	wp_enqueue_style( 'cloud-tree-style', get_stylesheet_directory_uri() . '/css/style.css',array(), $q);
 	// wp_enqueue_style( 'indieweb', get_stylesheet_uri(),array(), $q);
+	wp_enqueue_script( 'cloud-tree-js', get_stylesheet_directory_uri() . '/js/script.js',array( 'jquery', 'media-views', 'media-models' ), $q);
 }
 add_action( 'wp_enqueue_scripts', 'scripts_styles' );
