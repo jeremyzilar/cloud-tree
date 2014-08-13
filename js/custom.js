@@ -1,3 +1,4 @@
+(function($){
 var wh = $(window).height();
 
 $(document).ready(function(){
@@ -54,7 +55,7 @@ $(document).ready(function(){
   });
   
   // Tablesorter - http://tablesorter.com/docs/
-  $("#main .table").tablesorter();   
+  // $("#main .table").tablesorter();   
 
   
   // The Editing Buttons =================================================================
@@ -242,6 +243,5 @@ $(document).ready(function(){
   
   
 
- 
-
-});$
+ });
+})(jQuery);

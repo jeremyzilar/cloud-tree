@@ -7,18 +7,8 @@
   if (EDITABLE === true && DATABASE === true) {
     include TDIR . 'show_logroll.php';
   }
-
-// Show ReadMe
-require_once 'functions/readme.php';
-if (!empty($readmeMarkup)) { ?>
-<section id="readme" class="hiddens">
-  <div class="container">
-    <?php echo $readmeMarkup; ?>
-  </div>
-</section>
-<?php }
-
 ?>
+
 
 
 <!-- Footer -->
