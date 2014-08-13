@@ -52,3 +52,6 @@ define('DATABASE', $database);
 $logging = false;
 // $logging = true;
 define('LOGGING', $logging);
+
+include 'functions/get_images.php';
+include 'functions/show_files.php';
