@@ -2,7 +2,7 @@
 </section> <!-- #main -->
 
 <!-- Show Log Roll -->
-<?php 
+<?php
   // Log Roll
   if (EDITABLE === true && DATABASE === true) {
     include TDIR . 'show_logroll.php';
@@ -36,11 +36,11 @@ if (!empty($readmeMarkup)) { ?>
 <!-- JS -->
 <script type="text/javascript" charset="utf-8">
   // Get the current path. Essential for saving path to database.
-  var path = window.location.pathname; 
+  var path = window.location.pathname;
   var designer = 'Jeremy Zilar';
   var designer_ldap = 'zilarjd';
 </script>
 
-
+<?php wp_footer() ?>
 </body>
 </html>
