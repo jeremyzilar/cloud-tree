@@ -2,11 +2,15 @@
 function scripts_styles() {
 	global $wp_styles;
 	$q = 'v113';
-	
+
 	// Le JS
 	wp_enqueue_script('bootstrap-js', get_stylesheet_directory_uri() . '/js/bootstrap.min.js', array( 'jquery' ), $q, true );
 	wp_enqueue_script('moment-js', get_stylesheet_directory_uri() . '/js/moment.min.js', array( 'jquery' ), $q, true );
 	wp_enqueue_script('indieweb', get_stylesheet_directory_uri() . '/js/custom.js', array( 'jquery' ), $q, true );
+	wp_enqueue_media();
+
+	wp_enqueue_script('cloudtree-script', get_stylesheet_directory_uri() . '/js/script.js', array( 'media-views', 'media-models' ), $q, true );
+
 	// Le CSS
 	wp_enqueue_style( 'bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css',array(), $q);
 	wp_enqueue_style( 'openwebicons', get_stylesheet_directory_uri() . '/css/files.css',array(), $q);

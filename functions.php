@@ -59,3 +59,16 @@ $project_title = "Project Title";
 
 include 'functions/get_images.php';
 include 'functions/show_files.php';
+
+function cloudtree_print_microtemplates() {
+	?>
+	<script type="text/html" id="tmpl-media-item">
+        <td class="hide_file"><i class="fa fa-eye"></i></td>
+        <td valign="top" class="icon dir" data-ext="dir"><a href="/windex/.git"><img src="/windex/icons/dir.png" alt="dir" width="24" height="24"></a></td>
+        <td class="file"><a href="{{data.model.get('url') }}">{{ data.model.get('title') }}</a></td>
+        <td class="modified"><span class="log_time" title="Tuesday, August 12 2014 7:21 AM">13 hours ago</span></td>
+        <td class="action download"><a href="/windex/.git" download=".git"><i class="fa fa-download"></i></a></td>
+        <td class="action delete file" data-uri="/windex/.git"><i class="fa fa-trash-o"></i></td>
+	</script><?php
+}
+add_action( 'print_media_templates', 'cloudtree_print_microtemplates' );

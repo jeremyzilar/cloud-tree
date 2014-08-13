@@ -38,7 +38,7 @@ function show_files($files){
   if (empty($files['items'])) {
 		include TDIR . 'empty-dir.php';
   } else {
-    echo <<<EOF
+    ?>
     <table class="table col-xs-12 allfiles tablesorter">
       <thead>
       <tr>
@@ -50,42 +50,7 @@ function show_files($files){
         <th class="delete"></th>
       </tr>
       </thead>
-      <tbody>
-EOF;
-
-    foreach ($files['items'] as $file) {
-      $size = $file['size'];
-      $name = $file['name'];
-      $owner = $file['owner'];
-      $path = str_replace($dr,'',$file['path']);
-      if ($path == $r) {
-        $path = '';
-      }
-      $link = $r.$name;
-      $created = $file['created'];
-      $modified = $file['modified'];
-      $octal_perms = $file['octal_perms'];
-      if ($file['hidden'] == true) {
-        $hidden = 'quiet';
-      } else {
-        $hidden = '';
-      }
-      // Check File types and extensions
-      $type = $file['type'];
-      $ext = $file['ext'];
-      $ext = file_type($type, $ext);
-      echo <<<EOF
-      <tr class="i $hidden">
-        <td class="hide_file"><i class="fa fa-eye"></i></td>
-        <td valign="top" class="icon $type" data-ext="$ext"><a href="$link"><img src="/windex/icons/$ext.png" alt="$ext" width="24" height="24"></a></td>
-        <td class="file"><a href="$link">$name</a></td>
-        <td class="modified"><span class="log_time" title='$modified'>$modified</span></td>
-        <td class="action download"><a href="$link" download="$name"><i class="fa fa-download"></i></a></td>
-        <td class="action delete" data-uri="$link"><i class="fa fa-trash-o"></i></td>
-      </tr>
-EOF;
-    }
-    echo '<tbody></table>';
+      <tbody><tbody></table><?php
   }
 }
 

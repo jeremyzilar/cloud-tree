@@ -38,27 +38,3 @@
         </div>
       </div>
       <!-- end #page-head -->
-
-      <div class="row">
-        <div class="col-xs-12">
-
-          <?php
-
-            // Breadcrumb Navigation
-            include TDIR . 'breadcrumb-nav.php';
-
-            // File Upload
-            include TDIR . 'file-upload.php';
-
-            // Edit Tools
-            if (EDITABLE === true) {
-              include TDIR . 'tools.php';
-            }
-
-            // Files / Table
-            include TDIR . 'show_files.php';
-
-          ?>
-
-        </div> <!-- end .col-xs-12 -->
-      </div> <!-- end .row -->
