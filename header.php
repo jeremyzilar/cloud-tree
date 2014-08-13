@@ -34,7 +34,7 @@
       <!-- Page Head -->
       <div id="page-head" class="row">
         <div class="">
-          <h2 placeholder="Add Title"><?php echo $project_title; ?></h2>
+          <h2 placeholder="Add Title">Project Title</h2>
         </div>
       </div>
       <!-- end #page-head -->

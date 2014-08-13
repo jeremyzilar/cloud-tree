@@ -53,5 +53,9 @@ $logging = false;
 // $logging = true;
 define('LOGGING', $logging);
 
+
+$project_title = "Project Title";
+
+
 include 'functions/get_images.php';
 include 'functions/show_files.php';
