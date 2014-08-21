@@ -4,23 +4,23 @@ function file_type($type, $ext){
   if ($type == 'dir') {
     $ext = 'dir';
   }
-  
+
   $img = array('jpg','jpeg','png','PNG','gif','bmp','tif','tiff','ico');
   if (in_array($ext, $img)) {
     $ext = 'img';
   }
-  
-  $doc = array('doc','docx'); 
+
+  $doc = array('doc','docx');
   if (in_array($ext, $doc)) {
     $ext = 'doc';
   }
-  
-  $xls = array('xls','xlsx'); 
+
+  $xls = array('xls','xlsx');
   if (in_array($ext, $xls)) {
     $ext = 'xls';
   }
-  
-  $textmate = array('json','js','css','html','htm','php','jsonp','htaccess', 'svn-base'); 
+
+  $textmate = array('json','js','css','html','htm','php','jsonp','htaccess', 'svn-base');
   if (in_array($ext, $textmate)) {
     $ext = 'textmate';
   }
