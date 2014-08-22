@@ -71,6 +71,7 @@
     var app_router = new AppRouter;
 
     app_router.on('route:defaultRoute', function( slug ) {
+	$('.allfiles tbody').html('');
         cloudtree.attachments = new cloudtree.View.Attachments({
 			collection: new FilesystemFolder({
 				slug: slug

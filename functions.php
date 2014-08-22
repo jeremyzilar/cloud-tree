@@ -16,17 +16,20 @@ add_filter( 'wp_unique_post_slug', function( $slug, $post_ID, $post_status, $pos
 function cloudtree_print_microtemplates() {
 	?>
 	<script type="text/html" id="tmpl-media-item">
-	<td class="hide_file"><i class="fa fa-eye"></i></td>
+	<td class="hide_file">
+		<i class="fa fa-eye"></i>
+	</td>
 	<td valign="top" class="icon dir" data-ext="dir">
-		<a href="/windex/.git">
-			<# if ( data.model.attributes.attachment_meta.sizes
-				&& data.model.attributes.attachment_meta.sizes.thumbnail ) { #>
-			<img src="{{ data.model.attributes.attachment_meta.sizes.thumbnail.url }}" alt="dir" width="24" height="24">
-			<# } #>
-			</a>
-		</td>
+		<# if ( data.model.attributes.attachment_meta.sizes
+			&& data.model.attributes.attachment_meta.sizes.thumbnail ) { #>
+		<img src="{{ data.model.attributes.attachment_meta.sizes.thumbnail.url }}" alt="dir" width="24" height="24">
+		<# } #>
+		<# if ( data.model.attributes.mime_type == 'application/x-directory' ) { #>
+			<img src="<?php echo get_stylesheet_directory_uri() . '/includes/images/directory.png' ?>" alt="dir" width="24" height="24">
+		<# } #>
+	</td>
 	<td class="file">
-		<a href="{{data.model.get('url') }}">{{ data.model.get('title') }}</a>
+		<a href="#{{data.model.get( 'path' ) }}">{{ data.model.get('title') }}</a>
 	</td>
 	<td class="modified"><span class="log_time" title="Tuesday, August 12 2014 7:21 AM">13 hours ago</span></td>
 	<td class="action download"><a href="/windex/.git" download=".git"><i class="fa fa-download"></i></a></td>
@@ -56,6 +59,20 @@ function cloudtree_scripts_styles() {
 }
 add_action( 'wp_enqueue_scripts', 'cloudtree_scripts_styles' );
 
-// Front end request this/that/and/the/other/thing
-// allow slugs to be duplicated?
-//
+/**
+ * [cloudtree_get_attachment_path description]
+ *
+ * @param  [type] $id [description]
+ * @return [type]     [description]
+ */
+function cloudtree_get_attachment_path( $id ) {
+	$post = get_post( $id );
+	$post_parent = $post->post_parent;
+	$path = $post->post_name;
+	while ( $post_parent != 0 ) {
+		$parent_post = get_post( $post_parent );
+		$post_parent = $parent_post->post_parent;
+		$path = $parent_post->post_name . '/' . $path;
+	}
+	return $path;
+}
