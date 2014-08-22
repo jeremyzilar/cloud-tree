@@ -1,7 +1,7 @@
 <?php
-
 if ( ! defined( 'JSON_API_VERSION' ) )
 	require( 'includes/WP-API/plugin.php' );
+require( 'includes/wp-api-customizations.php' );
 
 function cloudtree_print_microtemplates() {
 	?>

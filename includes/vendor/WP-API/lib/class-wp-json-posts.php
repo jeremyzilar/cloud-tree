@@ -222,7 +222,6 @@ class WP_JSON_Posts {
 	 */
 	protected function check_read_permission( $post ) {
 		$post_type = get_post_type_object( $post['post_type'] );
-
 		// Ensure the post type can be read
 		if ( ! $post_type->show_in_json ) {
 			return false;

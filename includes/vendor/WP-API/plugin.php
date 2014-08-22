@@ -302,7 +302,6 @@ function json_register_post_type( $post_type, $args ) {
 	if ( $post_type === 'revision' ) {
 		$type->show_in_json = true;
 	}
-
 	// Default to the value of $publicly_queryable.
 	if ( ! isset( $type->show_in_json ) ) {
 		$type->show_in_json = $type->publicly_queryable;
@@ -533,7 +532,7 @@ function json_get_date_with_gmt( $date, $force_utc = false ) {
  * Explicitly strips timezones, as datetimes are not saved with any timezone
  * information. Including any information on the offset could be misleading.
  *
- * @param string $date 
+ * @param string $date
  */
 function json_mysql_to_rfc3339( $date_string ) {
 	$formatted = mysql2date( 'c', $date_string, false );
