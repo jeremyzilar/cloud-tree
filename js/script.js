@@ -28,8 +28,7 @@
 			}, this );
 
 			this.collection.on( 'reset', this.render, this );
-
-			this.collection.more();
+			this.collection.fetch();
 
 		},
 
@@ -43,18 +42,45 @@
 
 	});
 
-	// cloud.tree.AttachmentsAndFolders = wp.media.Attachments.extend({
+	/**
+	 * Backbone media library collection
+	 */
+	var FilesystemFolder = wp.api.collections.MediaLibrary.extend({
+		initialize: function( options ) {
+			this.options = options;
+			this.slug = this.options.slug || '';
+			wp.api.collections.MediaLibrary.prototype.initialize.apply( this, arguments );
+		},
 
-	// });
-	// ( null, {
-	// 		props: _.extend( _.defaults( props || {}, { orderby: 'date' } ), { query: true } )
-	// 	});
+		fetch: function( options ) {
+			_.extend( { slug: this.slug }, options );
+			wp.api.collections.MediaLibrary.prototype.fetch.apply( this, arguments );
+		},
 
-	cloudtree.attachments = new cloudtree.View.Attachments({
-		collection: new media.model.Query( null, { args: media.model.Query.defaultArgs } ),
-		el: '.allfiles tbody'
+		url: function() {
+			return WP_API_Settings.root + '/filesystem-folder/' + this.slug;
+		}
 	});
-	cloudtree.attachments.render();
-	// media.view.Attachments = media.View.extend({
+
+	var AppRouter = Backbone.Router.extend({
+        routes: {
+            "*actions": "defaultRoute" // matches http://example.com/#anything-here
+        }
+    });
+    // Initiate the router
+    var app_router = new AppRouter;
+
+    app_router.on('route:defaultRoute', function( slug ) {
+        cloudtree.attachments = new cloudtree.View.Attachments({
+			collection: new FilesystemFolder({
+				slug: slug
+			}),
+			el: '.allfiles tbody'
+		});
+		cloudtree.attachments.render();
+    });
+
+    // Start Backbone history a necessary step for bookmarkable URL's
+    Backbone.history.start();
 
 })(jQuery, Backbone, _ );
