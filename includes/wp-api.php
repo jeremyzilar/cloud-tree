@@ -1,13 +1,24 @@
 <?php
 
 function cloudtree_api_default_filters( $server ) {
-	$wp_json_media_filesystem = new WP_JSON_Media_Filesystem( $server );
-	add_filter( 'json_endpoints', array( $wp_json_media_filesystem, 'register_routes' ), 1 );
+	$wp_json_media_folder = new WP_JSON_Media_Folder( $server );
+	add_filter( 'json_endpoints', array( $wp_json_media_folder, 'register_routes' ), 1 );
 }
+
+/**
+ * Allow meta query to be passed as a query var.
+ */
+add_filter( 'json_query_vars', function( $valid_vars ) {
+	$valid_vars[] = 'meta_query';
+	return $valid_vars;
+} );
 
 add_action( 'wp_json_server_before_serve', 'cloudtree_api_default_filters', 10, 1 );
 
-class WP_JSON_Media_Filesystem extends WP_JSON_Media {
+// get folders and files within a folder
+// create a folder
+//
+class WP_JSON_Media_Folder extends WP_JSON_Media {
 	/**
 	 * Register the media-related routes
 	 *
@@ -16,18 +27,13 @@ class WP_JSON_Media_Filesystem extends WP_JSON_Media {
 	 */
 	public function register_routes( $routes ) {
 		$media_routes = array(
-			'/filesystem-folder'             => array(
-				array( array( $this, 'get_posts' ),     WP_JSON_Server::READABLE ),
+			'/media-folder'             => array(
+				array( array( $this, 'get_posts_under_folder_path' ), WP_JSON_Server::READABLE ),
 				array( array( $this, 'create_folder' ), WP_JSON_Server::CREATABLE ),
 			),
-			'/filesystem-folder/(?P<path>\S*)'             => array(
-				array( array( $this, 'get_post_by_path' ),         WP_JSON_Server::READABLE ),
+			'/media-folder/(?P<path>\S*)'             => array(
+				array( array( $this, 'get_posts_under_folder_path' ), WP_JSON_Server::READABLE ),
 			),
-			// '/media/(?P<id>\d+)' => array(
-			// 	array( array( $this, 'get_post' ),    WP_JSON_Server::READABLE ),
-			// 	array( array( $this, 'edit_post' ),   WP_JSON_Server::EDITABLE ),
-			// 	array( array( $this, 'delete_post' ), WP_JSON_Server::DELETABLE ),
-			// ),
 		);
 		return array_merge( $routes, $media_routes );
 	}
@@ -40,15 +46,51 @@ class WP_JSON_Media_Filesystem extends WP_JSON_Media {
 			return new WP_Error( 'json_post_invalid_type', __( 'Invalid post type' ), array( 'status' => 400 ) );
 		}
 
-		if ( empty( $filter['post_parent'])) {
-			$filter['post_parent'] = 0;
+		if ( isset( $filter['folder_id'] ) ) {
+			$filter['meta_query'][] = array(
+				'key'   => '_media_folder_parent',
+				'value' => $filter['folder_id'],
+				'type'  => 'NUMERIC'
+			);
+			if ( $filter['folder_id'] === 0 ) {
+				$filter['meta_query']['relation'] = 'OR';
+				$filter['meta_query'][] = array(
+					'key'     => '_media_folder_parent',
+					'compare' => 'NOT EXISTS'
+				);
+			}
+		}
+		$filter['posts_per_page'] = -1;
+		$filter['orderby'] = 'title';
+		$filter['order'] = 'ASC';
+		$response = parent::get_posts( $filter, $context, 'attachment', $page );
+
+
+		$folder_query_args = $filter;
+		$folder_query_args['post_type'] = 'media-folder';
+		$folder_query = new WP_Query();
+		$folder_posts = $folder_query->query( $folder_query_args );
+
+		// holds all the posts data
+		$struct = array();
+		foreach ( $folder_posts as $post ) {
+			$post = get_object_vars( $post );
+			// Do we have permission to read this post?
+			if ( ! $this->check_read_permission( $post ) ) {
+				continue;
+			}
+
+			$response->link_header( 'item', json_url( '/posts/' . $post['ID'] ), array( 'title' => $post['post_title'] ) );
+			$post_data = $this->prepare_post( $post, $context );
+			if ( is_wp_error( $post_data ) ) {
+				continue;
+			}
+
+			$struct[] = $post_data;
 		}
 
-		$filter['posts_per_page'] = -1;
-
-		$posts = parent::get_posts( $filter, $context, 'attachment', $page );
-
-		return $posts;
+		$response->set_data( array_merge( $struct, $response->get_data() ) );
+		return $response;
 	}
 
 	public function create_folder( $_files, $_headers, $post_id = 0 ) {
@@ -133,43 +175,59 @@ class WP_JSON_Media_Filesystem extends WP_JSON_Media {
 
 		$headers = array( 'Location' => json_url( '/media/' . $id ) );
 		$path = cloudtree_get_attachment_path( $id );
-		return new WP_JSON_Response( $this->get_post_by_path( $path, 'edit' ), 201, $headers );
+		return new WP_JSON_Response( $this->get_posts_under_folder_path( $path, 'edit' ), 201, $headers );
 	}
 
 	protected function prepare_post( $post, $context = 'single' ) {
 		$data = parent::prepare_post( $post, $context );
-		$data['mime_type'] = $post['post_mime_type'];
+		if ( $data['type'] === 'media-folder' ) {
+			// Any specific data for folders
+		}
 		$data['path'] = cloudtree_get_attachment_path( $post['ID'] );
 		return $data;
 	}
 
 	/**
-	 * Retrieve a attachment
-	 *
-	 * @see WP_JSON_Posts::get_post()
+	 * Get all media files/folders under a folder path.
 	 */
-	public function get_post_by_path( $path, $context = 'view' ) {
+	public function get_posts_under_folder_path( $path = '', $context = 'view' ) {
 		if ( strpos( $path, '/' ) ) {
 			$post_slugs = explode( '/', $path );
-		} else {
+		} else if ( $path ) {
 			$post_slugs = array( $path );
 		}
 
-		$current_parent = 0;
-		foreach ( $post_slugs as $slug ) {
-			$posts = get_posts( array(
-				'name' => $slug,
-				'post_parent' => $current_parent,
-				'post_type' => 'attachment'
-			) );
-			if ( empty( $posts ) ) {
-				return false;
-			}
-			$current_post = $posts[0];
-			// @todo add capabilities checks for each folder as we go.
-		}
+		$query = array();
+		$folder_id = 0;
+		if ( ! empty( $path ) ) {
+			foreach ( $post_slugs as $slug ) {
+				$query_args = array(
+					'name' => $slug,
+					'post_type' => 'media-folder',
+				);
+				$query_args['meta_query'][] = array(
+					'key' => '_media_folder_parent',
+					'value' => $folder_id
+				);
+				if ( $folder_id === 0 ) {
+					$query_args['meta_query']['relation'] = 'OR';
+					$query_args['meta_query'][] = array(
+						'key'     => '_media_folder_parent',
+						'compare' => 'NOT EXISTS'
+					);
+				}
 
-		return $this->get_posts( array( 'post_parent' => $current_post->ID ), $context );
+				$posts = get_posts( $query_args );
+				if ( empty( $posts ) ) {
+					return false;
+				}
+				$folder_id = $posts[0]->ID;
+				// @todo add capabilities checks for each folder as we go.
+			}
+		}
+		$query['folder_id'] = $folder_id;
+
+		return $this->get_posts( $query, $context );
 	}
 
 }
