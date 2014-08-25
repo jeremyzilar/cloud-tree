@@ -176,7 +176,6 @@ class WP_JSON_Posts {
 
 		// Special parameter handling
 		$query['paged'] = absint( $page );
-
 		$post_query = new WP_Query();
 		$posts_list = $post_query->query( $query );
 		$response   = new WP_JSON_Response();

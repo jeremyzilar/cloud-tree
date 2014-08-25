@@ -48,14 +48,14 @@ class WP_JSON_Media_Folder extends WP_JSON_Media {
 
 		if ( isset( $filter['folder_id'] ) ) {
 			$filter['meta_query'][] = array(
-				'key'   => '_media_folder_parent',
+				'key'   => 'media_folder_parent',
 				'value' => $filter['folder_id'],
 				'type'  => 'NUMERIC'
 			);
 			if ( $filter['folder_id'] === 0 ) {
 				$filter['meta_query']['relation'] = 'OR';
 				$filter['meta_query'][] = array(
-					'key'     => '_media_folder_parent',
+					'key'     => 'media_folder_parent',
 					'compare' => 'NOT EXISTS'
 				);
 			}
@@ -64,7 +64,6 @@ class WP_JSON_Media_Folder extends WP_JSON_Media {
 		$filter['orderby'] = 'title';
 		$filter['order'] = 'ASC';
 		$response = parent::get_posts( $filter, $context, 'attachment', $page );
-
 
 		$folder_query_args = $filter;
 		$folder_query_args['post_type'] = 'media-folder';
@@ -206,13 +205,13 @@ class WP_JSON_Media_Folder extends WP_JSON_Media {
 					'post_type' => 'media-folder',
 				);
 				$query_args['meta_query'][] = array(
-					'key' => '_media_folder_parent',
+					'key' => 'media_folder_parent',
 					'value' => $folder_id
 				);
 				if ( $folder_id === 0 ) {
 					$query_args['meta_query']['relation'] = 'OR';
 					$query_args['meta_query'][] = array(
-						'key'     => '_media_folder_parent',
+						'key'     => 'media_folder_parent',
 						'compare' => 'NOT EXISTS'
 					);
 				}

@@ -1,7 +1,7 @@
-(function($, Backbone, _ ) {
-	window.cloudtree = {
-		View: {}
-	}, media = wp.media;
+(function($, Backbone, _, Marionette ) {
+	var media = wp.media,
+		cloudtree = window.cloudtree = new Backbone.Marionette.Application();
+	cloudtree.View = {};
 	cloudtree.View.Attachment = media.View.extend({
 		tagName: 'tr',
 		template:  media.template('media-item'),
@@ -11,26 +11,25 @@
 			this.$el.draggable({
 				cursor: 'move',
 				cursorAt: { top: -12, left: -20 },
-				helper: function( event ) {
-					return $( '<div class="ui-widget-header">I\'m a custom helper</div>' );
+				start: function() {
+					self.controller.trigger( 'selection:add', self.model );
 				},
-				stop: function( event, ui ) {
-					debugger;
-				}
+				helper: "clone"
 			});
-			this.$el.droppable({
-				drop: function( event, ui ) {
-					var folder = cloudtree.attachments.getAttachmentFromDomNode( this );
-					self.model.moveToFolder( folder );
-				}
-			});
+			if ( self.model.get('type' ) === 'media-folder' ) {
+				this.$el.droppable({
+					drop: function( event, ui ) {
+						folder = self.model;
+						self.controller.trigger( 'selection:moveToFolder', folder );
+					}
+				});
+			}
 		}
 	});
 	cloudtree.View.Attachments = media.View.extend({
-		initialize: function() {
-
+		initialize: function(options) {
 			this._viewsByCid = {};
-
+			this.controller = options.controller;
 
 			this.collection.on( 'add', function( attachment ) {
 				this.views.add( this.createAttachmentView( attachment ), {
@@ -54,12 +53,19 @@
 
 		createAttachmentView: function( attachment ) {
 			var view = new cloudtree.View.Attachment({
+				controller: this.controller,
 				model:      attachment,
 				collection: this.collection
 			});
 			return this._viewsByCid[ attachment.cid ] = view;
 		},
 
+		/**
+		 * @todo pretty sure we won't need this.
+		 *
+		 * @param  {[type]} domNode [description]
+		 * @return {[type]}         [description]
+		 */
 		getAttachmentFromDomNode: function( domNode ) {
 			var view = _.find( this.views.all(), function( view ) {
 				return view.el.isSameNode( domNode );
@@ -71,23 +77,34 @@
 
 	});
 
-	wp.api.models.MediaFolder = wp.api.models.Media.extend({
+	wp.api.models.MediaFilesystemItem = wp.api.models.Post.extend({
 		moveToFolder: function( folder ) {
-			var meta = this.get( 'post_meta' ) || [];
-
-			meta.push( { key: '_media_folder_parent', value: folder.get('id') } );
-			this.set( 'post_meta', meta );
+			var meta = this.get( 'post_meta' ) || [],
+				newMeta = [];
+			if ( ! _.isArray( meta ) )
+				meta = [];
+			meta.forEach(function(element, index, array) {
+				if ( element.key !== 'media_folder_parent' ) {
+					newMeta.push( element );
+				}
+			});
+			newMeta.push( { key: 'media_folder_parent', value: folder.get('ID') } );
+			this.set( 'post_meta', newMeta );
+			this.save();
 		}
-	}); //MediaFolderModel
+	});
+
 	/**
 	 * Backbone media library collection
 	 */
-	wp.api.collections.MediaFolder = wp.api.collections.MediaLibrary.extend({
-		model: wp.api.models.MediaFolder,
+	wp.api.collections.MediaFilesystemItems = wp.api.collections.MediaLibrary.extend({
+		model: wp.api.models.MediaFilesystemItem,
 
 		initialize: function( options ) {
-			this.options = options;
+			this.options = options || {};
 			this.slug = this.options.slug || '';
+			this.controller = this.options.controller || null;
+
 			wp.api.collections.MediaLibrary.prototype.initialize.apply( this, arguments );
 		},
 
@@ -101,26 +118,53 @@
 		}
 	});
 
-	var AppRouter = Backbone.Router.extend({
+	cloudtree.Router = Backbone.Router.extend({
 		routes: {
 			"*actions": "defaultRoute" // matches http://example.com/#anything-here
 		}
 	});
-	// Initiate the router
-	var app_router = new AppRouter;
 
-	app_router.on('route:defaultRoute', function( slug ) {
-	$('.allfiles tbody').html('');
-		cloudtree.attachments = new cloudtree.View.Attachments({
-			collection: new wp.api.collections.MediaFolder({
-				slug: slug
-			}),
-			el: '.allfiles tbody'
-		});
-		cloudtree.attachments.render();
+	cloudtree.FilesystemController = Backbone.Model.extend({
+		initialize: function() {
+
+			// @todo why don't models have an option for events hashes like views?
+			this.on( 'selection:add', _.bind( this.addFileToSelection, this ) );
+			this.on( 'selection:moveToFolder', _.bind( this.moveSelectionToFolder, this ) );
+
+			this.Router = new cloudtree.Router;
+			this.Router.on( 'route:defaultRoute', _.bind( this.default, this ) );
+			this.selection = new wp.api.collections.MediaFilesystemItems();
+		},
+
+		default: function( slug ) {
+			$('.allfiles tbody').html('');
+			this.attachments = new cloudtree.View.Attachments({
+				controller: this,
+				collection: new wp.api.collections.MediaFilesystemItems({
+					controller: this,
+					slug: slug
+				}),
+				el: '.allfiles tbody'
+			});
+			this.attachments.render();
+		},
+
+		addFileToSelection: function( model ) {
+			this.selection.add( [ model ] );
+		},
+
+		moveSelectionToFolder: function( folder ) {
+			this.selection.invoke( 'moveToFolder', folder );
+		}
 	});
 
-	// Start Backbone history a necessary step for bookmarkable URL's
-	Backbone.history.start();
+	cloudtree.addInitializer(function(options){
+		new cloudtree.FilesystemController;
 
-})(jQuery, Backbone, _ );
+		Backbone.history.start();
+	});
+
+	cloudtree.start();
+
+
+})(jQuery, Backbone, _, Marionette );
