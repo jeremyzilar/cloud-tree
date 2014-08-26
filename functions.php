@@ -92,8 +92,11 @@ function cloudtree_scripts_styles() {
 	$settings = array( 'root' => home_url( json_get_url_prefix() ), 'nonce' => wp_create_nonce( 'wp_json' ) );
 	wp_localize_script( 'wp-api-js', 'WP_API_Settings', $settings );
 	wp_register_script( 'marionette', get_stylesheet_directory_uri() . '/includes/vendor/marionette.js', array( 'backbone' ), $version, true );
-	wp_enqueue_script( 'cloudtree-script', get_stylesheet_directory_uri() . '/js/script.js', array( 'wp-api-js', 'media-views', 'media-models', 'jquery-ui-draggable', 'jquery-ui-droppable', 'marionette' ), $version, true );
+	wp_register_script( 'cloudtree-script', get_stylesheet_directory_uri() . '/js/script.js', array( 'wp-api-js', 'media-views', 'media-models', 'jquery-ui-draggable', 'jquery-ui-droppable', 'marionette' ), $version, true );
+	wp_localize_script( 'cloudtree-script', 'cloudtreeSettings', array( 'themeURL' => get_stylesheet_directory_uri() ) );
+	wp_enqueue_script( 'cloudtree-script' );
 	wp_enqueue_style( 'bootstrap', '//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css' );
+	wp_enqueue_style( 'cloudtree', get_stylesheet_directory_uri() . '/style.css' );
 }
 add_action( 'wp_enqueue_scripts', 'cloudtree_scripts_styles' );
 
@@ -103,14 +106,15 @@ add_action( 'wp_enqueue_scripts', 'cloudtree_scripts_styles' );
  * @param  [type] $id [description]
  * @return [type]     [description]
  */
-function cloudtree_get_attachment_path( $id ) {
-	$post = get_post( $id );
-	$post_parent = $post->post_parent;
+function cloudtree_get_attachment_path( $post_id ) {
+	$post = get_post( $post_id );
 	$path = $post->post_name;
-	while ( $post_parent != 0 ) {
-		$parent_post = get_post( $post_parent );
-		$post_parent = $parent_post->post_parent;
-		$path = $parent_post->post_name . '/' . $path;
+	while ( $post_id ) {
+		$post_id = get_post_meta( $post_id, 'media_folder_parent', true );
+		if ( $post_id ) {
+			$post = get_post( $post_id );
+			$path = $post->post_name . '/' . $path;
+		}
 	}
 	return $path;
 }

@@ -8,22 +8,32 @@
 
 		initialize: function() {
 			var self = this;
+
+			this.listenTo( this.model, 'change:post_meta', _.bind( this.changePostMetaHandler, this ) );
 			this.$el.draggable({
-				cursor: 'move',
-				cursorAt: { top: -12, left: -20 },
+				cursor: 'default',
+				cursorAt: { left: 0 },
 				start: function() {
 					self.controller.trigger( 'selection:add', self.model );
 				},
-				helper: "clone"
+				helper: function() {
+					return $( '<div class="drag-helper"><img src="' + cloudtreeSettings.themeURL + '/includes/images/default.png"></div>' );
+				}
 			});
 			if ( self.model.get('type' ) === 'media-folder' ) {
 				this.$el.droppable({
+					hoverClass: 'active',
 					drop: function( event, ui ) {
 						folder = self.model;
 						self.controller.trigger( 'selection:moveToFolder', folder );
 					}
 				});
 			}
+		},
+
+		changePostMetaHandler: function(model, value, options) {
+			// @todo verify that the folder is no longer the parent of the view's collection's folder.
+			this.remove();
 		}
 	});
 	cloudtree.View.Attachments = media.View.extend({
@@ -48,7 +58,6 @@
 
 			this.collection.on( 'reset', this.render, this );
 			this.collection.fetch();
-
 		},
 
 		createAttachmentView: function( attachment ) {
@@ -58,21 +67,6 @@
 				collection: this.collection
 			});
 			return this._viewsByCid[ attachment.cid ] = view;
-		},
-
-		/**
-		 * @todo pretty sure we won't need this.
-		 *
-		 * @param  {[type]} domNode [description]
-		 * @return {[type]}         [description]
-		 */
-		getAttachmentFromDomNode: function( domNode ) {
-			var view = _.find( this.views.all(), function( view ) {
-				return view.el.isSameNode( domNode );
-			} );
-			if ( view && view.model ) {
-				return view.model;
-			}
 		}
 
 	});

@@ -2,3 +2,11 @@
 Theme Name: Cloud Tree
 Author: Jeremy Zilar
 */
+
+.drag-helper {
+	width: 48px;
+	height: 48px;
+}
+.ui-draggable-dragging {
+	/*margin-top: -24px;*/
+}
