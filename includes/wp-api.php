@@ -182,6 +182,7 @@ class WP_JSON_Media_Folder extends WP_JSON_Media {
 		if ( $data['type'] === 'media-folder' ) {
 			// Any specific data for folders
 		}
+		$data['post_meta'] = $this->get_all_meta( $post['ID'] );
 		$data['path'] = cloudtree_get_attachment_path( $post['ID'] );
 		return $data;
 	}

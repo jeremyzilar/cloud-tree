@@ -74,15 +74,17 @@
 	wp.api.models.MediaFilesystemItem = wp.api.models.Post.extend({
 		moveToFolder: function( folder ) {
 			var meta = this.get( 'post_meta' ) || [],
-				newMeta = [];
-			if ( ! _.isArray( meta ) )
-				meta = [];
+				newMeta = [],
+				updated = false;
 			meta.forEach(function(element, index, array) {
-				if ( element.key !== 'media_folder_parent' ) {
-					newMeta.push( element );
+				if ( element.key === 'media_folder_parent' ) {
+					element.value = folder.get( 'ID' );
 				}
+				newMeta.push( element );
 			});
-			newMeta.push( { key: 'media_folder_parent', value: folder.get('ID') } );
+			if ( ! updated ) {
+				newMeta.push( { key: 'media_folder_parent', value: folder.get('ID') } );
+			}
 			this.set( 'post_meta', newMeta );
 			this.save();
 		}
@@ -149,6 +151,9 @@
 
 		moveSelectionToFolder: function( folder ) {
 			this.selection.invoke( 'moveToFolder', folder );
+			while( this.selection.length ) {
+				this.selection.remove( this.selection.at(0) );
+			}
 		}
 	});
 
